@@ -1,0 +1,22 @@
+global:
+  imagePullPolicy: Never
+
+application:
+  image:
+    repository: simple-test_app
+  health:
+    defaultInitialDelay: 24
+    defaultTimeoutSeconds: 1
+    defaultPeriodSeconds: 3
+    defaultFailureThreshold: 3
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 1Gi
+  port: 8080
+  metricts: 
+    port: 9000
+  replicas: 1

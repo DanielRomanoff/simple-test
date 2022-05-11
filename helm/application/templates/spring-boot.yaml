@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-v1
+  namespace: default
+  labels:
+    app: hello
+spec:
+  replicas: {{ .Values.application.replicas }}
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.application.metricts.port }}"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: hello
+          image: hello
+          ports:
+            - containerPort: {{ .Values.application.port }}
+            - containerPort: {{ .Values.application.metricts.port }}
+          resources: {{ toYaml .Values.application.resources | nindent 12 }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.application.metricts.port }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.application.health.defaultInitialDelay }}
+            timeoutSeconds: {{ .Values.application.health.defaultTimeoutSeconds }}
+            periodSeconds: {{ .Values.application.health.defaultPeriodSeconds }}
+            failureThreshold: {{ .Values.application.health.defaultFailureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.application.metricts.port }}
+              scheme: HTTP
+            initialDelaySeconds: {{ .Values.application.health.defaultInitialDelay }}
+            timeoutSeconds: {{ .Values.application.health.defaultTimeoutSeconds }}
+            periodSeconds: {{ .Values.application.health.defaultPeriodSeconds }}
+            failureThreshold: {{ .Values.application.health.defaultFailureThreshold }}
+          command:
+            - java
+          args:
+            - '-jar'
+            - 'app.jar'
