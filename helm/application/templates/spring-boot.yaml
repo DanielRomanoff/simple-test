@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: hello
-          image: hello
+          image: simple-test_app
           ports:
             - containerPort: {{ .Values.application.port }}
             - containerPort: {{ .Values.application.metricts.port }}
