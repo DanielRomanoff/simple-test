@@ -39,7 +39,7 @@ kubectl get pods
 ```
 
 ``` shell
-kubectl port forward grafana-***-*** 3000
+kubectl port-forward grafana-***-*** 3000
 ```
 Login - ``admin``
 
